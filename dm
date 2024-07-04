@@ -116,6 +116,7 @@ WORK_PATH="$RET"
 . "$WORK_PATH/scripts/list.sh"
 
 . "$WORK_PATH/scripts/add.sh"
+. "$WORK_PATH/scripts/move.sh"
 . "$WORK_PATH/scripts/clean.sh"
 
 . "$WORK_PATH/scripts/store.sh"
@@ -184,6 +185,11 @@ main() {
     ( add | a )
       shift
       add "$@"
+      return $?
+      ;;
+    ( move | mv )
+      shift
+      move "$@"
       return $?
       ;;
     ( clean | cl )
