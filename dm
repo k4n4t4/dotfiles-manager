@@ -156,7 +156,6 @@ main() {
 
     ( help | usage | h | --help | -h )
       shift
-      : todo
       usage "$@"
       return $?
       ;;
@@ -210,38 +209,32 @@ main() {
       ;;
 
     ( link | ln )
-      : todo
       shift
       _install "$@"
       return $?
       ;;
     ( unlink | unln )
-      : todo
       shift
       _uninstall "$@"
       return $?
       ;;
     ( confirm | co )
-      : todo
       shift
       _verify "$@"
       return $?
       ;;
 
     ( install | i )
-      : todo
       shift
       install "$@"
       return $?
       ;;
     ( uninstall | u )
-      : todo
       shift
       uninstall "$@"
       return $?
       ;;
     ( verify | v )
-      : todo
       shift
       verify "$@"
       return $?
