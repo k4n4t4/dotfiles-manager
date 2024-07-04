@@ -321,39 +321,7 @@ _install_link_recursive() {
               qesc "$o"
               _temp_dirs="$_temp_dirs $RET"
             else
-              case "$t_s" in
-                ( "$o" )
-                  info "\"$t\" is managed."
-                  ;;
-                ( * )
-                  if file_exist "$t"; then
-                    if $_opt_force; then
-                      if [ -L "$t" ]; then
-                        _unlink "$t"
-                      else
-                        _del_r "$t"
-                      fi
-                    else
-                      error "\"$t\" is already in use."
-                      ask "Replace? [y/N]: "
-                      case "$RET" in
-                        ( [Yy] )
-                          if [ -L "$t" ]; then
-                            _unlink "$t"
-                          else
-                            _del_r "$t"
-                          fi
-                          ;;
-                        ( * )
-                          log "Canceled."
-                          return 0
-                          ;;
-                      esac
-                    fi
-                  fi
-                  _link "$o" "$t"
-                  ;;
-              esac
+              _install_link "$o" "$t" "$t_s" "$_opt_force"
             fi
             ;;
         esac
