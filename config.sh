@@ -1,2 +1,4 @@
 CHECK_INSTALL_LOCATION=false
-cmd_exist nvim && EDITOR=nvim
+if cmd_exist nvim; then
+  EDITOR=nvim
+fi
