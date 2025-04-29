@@ -186,9 +186,11 @@ _dot_link() {
 }
 
 _dot_link_rec() {
+  _dot_link_rec_origin="$1"
+  _dot_link_rec_target="$2"
   OLD_IFS="$IFS"
   IFS="$NL"
-  set -- "$DOT_ARG_ORIGIN"
+  set -- "$_dot_link_rec_origin"
   _dot_link_rec_current_depth=0
   while [ $# -gt 0 ]; do
     _dot_link_rec_current_depth=$((_dot_link_rec_current_depth + 1))
@@ -202,8 +204,8 @@ _dot_link_rec() {
           qesc "$_dot_link_rec_entry_origin"
           _dot_link_rec_dir_stack="$_dot_link_rec_dir_stack $RET"
         else
-          path_without "$_dot_link_rec_entry_origin" "$DOT_ARG_ORIGIN"
-          _dot_link_rec_entry_target="$DOT_ARG_TARGET/$RET"
+          path_without "$_dot_link_rec_entry_origin" "$_dot_link_rec_origin"
+          _dot_link_rec_entry_target="$_dot_link_rec_target/$RET"
           _dot_link "$_dot_link_rec_entry_origin" "$_dot_link_rec_entry_target"
         fi
       done
