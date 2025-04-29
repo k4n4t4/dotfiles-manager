@@ -130,11 +130,37 @@ dot() {
   if [ -e "$DOT_ARG_ORIGIN" ]; then
     if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
       if [ "$DOT_OPT_RECURSIVE" = "yes" ] && [ -d "$DOT_ARG_ORIGIN" ]; then
-        case "$SUBCOMMAND" in
-          ( 'install' ) _dot_link_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" "$DOT_OPT_IGNORE" ;;
-          ( 'uninstall' ) _dot_unlink_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" "$DOT_OPT_IGNORE" ;;
-          ( 'check' ) _dot_check_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" "$DOT_OPT_IGNORE" ;;
-        esac
+        OLD_IFS="$IFS"
+        IFS="$NL"
+        set -- "$DOT_ARG_ORIGIN"
+        _dot_rec_current_depth=0
+        while [ $# -gt 0 ]; do
+          _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
+          _dot_rec_dir_stack=""
+          while [ $# -gt 0 ]; do
+            for _dot_rec_entry_origin in "$1"/* "$1"/.*; do
+              base_name "$_dot_rec_entry_origin"
+              case "$RET" in ( '.' | '..' ) continue ;; esac
+              [ -e "$_dot_rec_entry_origin" ] || continue
+              alt_match "$RET" "$DOT_OPT_IGNORE" && continue
+              if [ -d "$_dot_rec_entry_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
+                qesc "$_dot_rec_entry_origin"
+                _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
+              else
+                path_without "$_dot_rec_entry_origin" "$DOT_ARG_ORIGIN"
+                _dot_rec_entry_target="$DOT_ARG_TARGET/$RET"
+                case "$SUBCOMMAND" in
+                  ( 'install' ) _dot_link "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+                  ( 'uninstall' ) _dot_unlink "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+                  ( 'check' ) _dot_check "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+                esac
+              fi
+            done
+            shift
+          done
+          eval "set -- $_dot_rec_dir_stack"
+        done
+        IFS="$OLD_IFS"
       else
         case "$SUBCOMMAND" in
           ( 'install' ) _dot_link "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" ;;
