@@ -189,27 +189,27 @@ _dot_link_rec() {
   OLD_IFS="$IFS"
   IFS="$NL"
   set -- "$DOT_ARG_ORIGIN"
-  _dot_rec_current_depth=0
+  _dot_link_rec_current_depth=0
   while [ $# -gt 0 ]; do
-    _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
-    _dot_rec_dir_stack=""
+    _dot_link_rec_current_depth=$((_dot_link_rec_current_depth + 1))
+    _dot_link_rec_dir_stack=""
     while [ $# -gt 0 ]; do
-      for _dot_rec_origin in "$1"/* "$1"/.*; do
-        base_name "$_dot_rec_origin"
+      for _dot_link_rec_entry_origin in "$1"/* "$1"/.*; do
+        base_name "$_dot_link_rec_entry_origin"
         case "$RET" in ( '.' | '..' ) continue ;; esac
-        [ -e "$_dot_rec_origin" ] || continue
-        if [ -d "$_dot_rec_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-          qesc "$_dot_rec_origin"
-          _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
+        [ -e "$_dot_link_rec_entry_origin" ] || continue
+        if [ -d "$_dot_link_rec_entry_origin" ] && [ "$_dot_link_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
+          qesc "$_dot_link_rec_entry_origin"
+          _dot_link_rec_dir_stack="$_dot_link_rec_dir_stack $RET"
         else
-          path_without "$_dot_rec_origin" "$DOT_ARG_ORIGIN"
-          _dot_rec_target="$DOT_ARG_TARGET/$RET"
-          _dot_link "$_dot_rec_origin" "$_dot_rec_target"
+          path_without "$_dot_link_rec_entry_origin" "$DOT_ARG_ORIGIN"
+          _dot_link_rec_entry_target="$DOT_ARG_TARGET/$RET"
+          _dot_link "$_dot_link_rec_entry_origin" "$_dot_link_rec_entry_target"
         fi
       done
       shift
     done
-    eval "set -- $_dot_rec_dir_stack"
+    eval "set -- $_dot_link_rec_dir_stack"
   done
   IFS="$OLD_IFS"
 }
