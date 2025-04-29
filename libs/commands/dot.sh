@@ -131,7 +131,7 @@ dot() {
     if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
       if [ "$DOT_OPT_RECURSIVE" = "yes" ] && [ -d "$DOT_ARG_ORIGIN" ]; then
         case "$SUBCOMMAND" in
-          ( 'install' ) _dot_link_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" ;;
+          ( 'install' ) _dot_link_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" "$DOT_OPT_IGNORE" ;;
           ( 'uninstall' ) : Not yet installed ;;
           ( 'check' ) : Not yet installed ;;
         esac
@@ -184,6 +184,7 @@ _dot_link() {
 _dot_link_rec() {
   _dot_link_rec_origin="$1"
   _dot_link_rec_target="$2"
+  _dot_link_rec_ignore="${3:-}"
   OLD_IFS="$IFS"
   IFS="$NL"
   set -- "$_dot_link_rec_origin"
@@ -196,7 +197,7 @@ _dot_link_rec() {
         base_name "$_dot_link_rec_entry_origin"
         case "$RET" in ( '.' | '..' ) continue ;; esac
         [ -e "$_dot_link_rec_entry_origin" ] || continue
-        alt_match "$RET" "$DOT_OPT_IGNORE" && continue
+        alt_match "$RET" "$_dot_link_rec_ignore" && continue
         if [ -d "$_dot_link_rec_entry_origin" ] && [ "$_dot_link_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
           qesc "$_dot_link_rec_entry_origin"
           _dot_link_rec_dir_stack="$_dot_link_rec_dir_stack $RET"
