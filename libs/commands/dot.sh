@@ -146,7 +146,6 @@ dot() {
       ;;
   esac
 
-
   if [ -e "$DOT_ARG_ORIGIN" ]; then
     if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
       if [ "$DOT_OPT_RECURSIVE" = "yes" ] && [ -d "$DOT_ARG_ORIGIN" ]; then
