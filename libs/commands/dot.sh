@@ -177,9 +177,6 @@ dot() {
 }
 
 
-# TODO: combine
-# TODO: ask
-
 _dot_link() {
   if file_exist "$2"; then
     if [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
@@ -217,6 +214,8 @@ _dot_unlink() {
     else
       msg_error "$1 -?- $2 (Faild)"
     fi
+  else
+    msg_log "$1 x-x $2 (Already)"
   fi
 }
 
@@ -226,137 +225,4 @@ _dot_check() {
   else
     msg_warn "$1 -?- $2"
   fi
-}
-
-_dot_link_rec() {
-  _dot_link_rec_origin="$1"
-  _dot_link_rec_target="$2"
-  _dot_link_rec_ignore="${3:-}"
-  OLD_IFS="$IFS"
-  IFS="$NL"
-  set -- "$_dot_link_rec_origin"
-  _dot_link_rec_current_depth=0
-  while [ $# -gt 0 ]; do
-    _dot_link_rec_current_depth=$((_dot_link_rec_current_depth + 1))
-    _dot_link_rec_dir_stack=""
-    while [ $# -gt 0 ]; do
-      for _dot_link_rec_entry_origin in "$1"/* "$1"/.*; do
-        base_name "$_dot_link_rec_entry_origin"
-        case "$RET" in ( '.' | '..' ) continue ;; esac
-        [ -e "$_dot_link_rec_entry_origin" ] || continue
-        alt_match "$RET" "$_dot_link_rec_ignore" && continue
-        if [ -d "$_dot_link_rec_entry_origin" ] && [ "$_dot_link_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-          qesc "$_dot_link_rec_entry_origin"
-          _dot_link_rec_dir_stack="$_dot_link_rec_dir_stack $RET"
-        else
-          path_without "$_dot_link_rec_entry_origin" "$_dot_link_rec_origin"
-          _dot_link_rec_entry_target="$_dot_link_rec_target/$RET"
-          _dot_link "$_dot_link_rec_entry_origin" "$_dot_link_rec_entry_target"
-        fi
-      done
-      shift
-    done
-    eval "set -- $_dot_link_rec_dir_stack"
-  done
-  IFS="$OLD_IFS"
-}
-
-_dot_unlink_rec() {
-  _dot_unlink_rec_origin="$1"
-  _dot_unlink_rec_target="$2"
-  _dot_unlink_rec_ignore="${3:-}"
-  OLD_IFS="$IFS"
-  IFS="$NL"
-  set -- "$_dot_unlink_rec_origin"
-  _dot_unlink_rec_current_depth=0
-  while [ $# -gt 0 ]; do
-    _dot_unlink_rec_current_depth=$((_dot_unlink_rec_current_depth + 1))
-    _dot_unlink_rec_dir_stack=""
-    while [ $# -gt 0 ]; do
-      for _dot_unlink_rec_entry_origin in "$1"/* "$1"/.*; do
-        base_name "$_dot_unlink_rec_entry_origin"
-        case "$RET" in ( '.' | '..' ) continue ;; esac
-        [ -e "$_dot_unlink_rec_entry_origin" ] || continue
-        alt_match "$RET" "$_dot_unlink_rec_ignore" && continue
-        if [ -d "$_dot_unlink_rec_entry_origin" ] && [ "$_dot_unlink_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-          qesc "$_dot_unlink_rec_entry_origin"
-          _dot_unlink_rec_dir_stack="$_dot_unlink_rec_dir_stack $RET"
-        else
-          path_without "$_dot_unlink_rec_entry_origin" "$_dot_unlink_rec_origin"
-          _dot_unlink_rec_entry_target="$_dot_unlink_rec_target/$RET"
-          _dot_unlink "$_dot_unlink_rec_entry_origin" "$_dot_unlink_rec_entry_target"
-        fi
-      done
-      shift
-    done
-    eval "set -- $_dot_unlink_rec_dir_stack"
-  done
-  IFS="$OLD_IFS"
-}
-
-_dot_check_rec() {
-  _dot_check_rec_origin="$1"
-  _dot_check_rec_target="$2"
-  _dot_check_rec_ignore="${3:-}"
-  OLD_IFS="$IFS"
-  IFS="$NL"
-  set -- "$_dot_check_rec_origin"
-  _dot_check_rec_current_depth=0
-  while [ $# -gt 0 ]; do
-    _dot_check_rec_current_depth=$((_dot_check_rec_current_depth + 1))
-    _dot_check_rec_dir_stack=""
-    while [ $# -gt 0 ]; do
-      for _dot_check_rec_entry_origin in "$1"/* "$1"/.*; do
-        base_name "$_dot_check_rec_entry_origin"
-        case "$RET" in ( '.' | '..' ) continue ;; esac
-        [ -e "$_dot_check_rec_entry_origin" ] || continue
-        alt_match "$RET" "$_dot_check_rec_ignore" && continue
-        if [ -d "$_dot_check_rec_entry_origin" ] && [ "$_dot_check_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-          qesc "$_dot_check_rec_entry_origin"
-          _dot_check_rec_dir_stack="$_dot_check_rec_dir_stack $RET"
-        else
-          path_without "$_dot_check_rec_entry_origin" "$_dot_check_rec_origin"
-          _dot_check_rec_entry_target="$_dot_check_rec_target/$RET"
-          _dot_check "$_dot_check_rec_entry_origin" "$_dot_check_rec_entry_target"
-        fi
-      done
-      shift
-    done
-    eval "set -- $_dot_check_rec_dir_stack"
-  done
-  IFS="$OLD_IFS"
-}
-
-dot_rec() {
-  OLD_IFS="$IFS"
-  IFS="$NL"
-  set -- "$DOT_ARG_ORIGIN"
-  _dot_rec_current_depth=0
-  while [ $# -gt 0 ]; do
-    _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
-    _dot_rec_dir_stack=""
-    while [ $# -gt 0 ]; do
-      for _dot_rec_entry_origin in "$1"/* "$1"/.*; do
-        base_name "$_dot_rec_entry_origin"
-        case "$RET" in ( '.' | '..' ) continue ;; esac
-        [ -e "$_dot_rec_entry_origin" ] || continue
-        alt_match "$RET" "$DOT_OPT_IGNORE" && continue
-        if [ -d "$_dot_rec_entry_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-          qesc "$_dot_rec_entry_origin"
-          _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
-        else
-          path_without "$_dot_rec_entry_origin" "$DOT_ARG_ORIGIN"
-          _dot_rec_entry_target="$DOT_ARG_TARGET/$RET"
-          case "$SUBCOMMAND" in
-            ( 'install' ) _dot_link "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
-            ( 'uninstall' ) _dot_unlink "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
-            ( 'check' ) _dot_check "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
-          esac
-        fi
-      done
-      shift
-    done
-    eval "set -- $_dot_rec_dir_stack"
-  done
-  IFS="$OLD_IFS"
 }
