@@ -184,6 +184,24 @@ _dot_link() {
   fi
 }
 
+_dot_unlink() {
+  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
+    if unlink -- "$2"; then
+      msg_log "$1 x-x $2"
+    else
+      msg_error "$1 -?- $2 (Faild)"
+    fi
+  fi
+}
+
+_dot_check() {
+  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
+    msg_log "$1 <-> $2"
+  else
+    msg_warn "$1 -?- $2"
+  fi
+}
+
 _dot_link_rec() {
   _dot_link_rec_origin="$1"
   _dot_link_rec_target="$2"
@@ -217,16 +235,6 @@ _dot_link_rec() {
   IFS="$OLD_IFS"
 }
 
-_dot_unlink() {
-  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
-    if unlink -- "$2"; then
-      msg_log "$1 x-x $2"
-    else
-      msg_error "$1 -?- $2 (Faild)"
-    fi
-  fi
-}
-
 _dot_unlink_rec() {
   _dot_unlink_rec_origin="$1"
   _dot_unlink_rec_target="$2"
@@ -258,14 +266,6 @@ _dot_unlink_rec() {
     eval "set -- $_dot_unlink_rec_dir_stack"
   done
   IFS="$OLD_IFS"
-}
-
-_dot_check() {
-  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
-    msg_log "$1 <-> $2"
-  else
-    msg_warn "$1 -?- $2"
-  fi
 }
 
 _dot_check_rec() {
@@ -321,7 +321,11 @@ dot_rec() {
         else
           path_without "$_dot_rec_entry_origin" "$DOT_ARG_ORIGIN"
           _dot_rec_entry_target="$DOT_ARG_TARGET/$RET"
-          : TODO
+          case "$SUBCOMMAND" in
+            ( 'install' ) _dot_link "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+            ( 'uninstall' ) _dot_unlink "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+            ( 'check' ) _dot_check "$_dot_rec_entry_origin" "$_dot_rec_entry_target" ;;
+          esac
         fi
       done
       shift
