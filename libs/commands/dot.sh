@@ -216,6 +216,7 @@ _dot_link_rec() {
   IFS="$OLD_IFS"
 }
 
+
 dot_install() {
   if [ -e "$DOT_ARG_ORIGIN" ]; then
     if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
