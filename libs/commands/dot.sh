@@ -204,14 +204,12 @@ dot_install() {
                 base_name "$_dot_rec_origin"
                 case "$RET" in ( '.' | '..' ) continue ;; esac
                 [ -e "$_dot_rec_origin" ] || continue
-
                 if [ -d "$_dot_rec_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
                   qesc "$_dot_rec_origin"
                   _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
                 else
                   path_without "$_dot_rec_origin" "$DOT_ARG_ORIGIN"
                   _dot_rec_target="$DOT_ARG_TARGET/$RET"
-
                   _dot_link "$_dot_rec_origin" "$_dot_rec_target"
                 fi
               done
