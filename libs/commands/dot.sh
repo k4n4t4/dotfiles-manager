@@ -151,6 +151,8 @@ dot() {
 }
 
 
+# TODO: combine
+
 _dot_link() {
   if file_exist "$2"; then
     if [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
