@@ -195,32 +195,32 @@ dot_install() {
           IFS="$NL"
 
           set -- "$DOT_ARG_ORIGIN"
-          _dot_recursive_current_depth=0
+          _dot_rec_current_depth=0
           while [ $# -gt 0 ]; do
-            _dot_recursive_current_depth=$((_dot_recursive_current_depth + 1))
-            _dot_recursive_dir_stack=""
+            _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
+            _dot_rec_dir_stack=""
 
             while [ $# -gt 0 ]; do
-              for _dot_recursive_origin in "$1"/* "$1"/.*; do
-                base_name "$_dot_recursive_origin"
+              for _dot_rec_origin in "$1"/* "$1"/.*; do
+                base_name "$_dot_rec_origin"
                 case "$RET" in
                   ( '.' | '..' ) continue ;;
                 esac
-                [ -e "$_dot_recursive_origin" ] || continue
+                [ -e "$_dot_rec_origin" ] || continue
 
-                if [ -d "$_dot_recursive_origin" ] && [ "$_dot_recursive_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
-                  qesc "$_dot_recursive_origin"
-                  _dot_recursive_dir_stack="$_dot_recursive_dir_stack $RET"
+                if [ -d "$_dot_rec_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
+                  qesc "$_dot_rec_origin"
+                  _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
                 else
-                  path_without "$_dot_recursive_origin" "$DOT_ARG_ORIGIN"
-                  _dot_recursive_target="$DOT_ARG_TARGET/$RET"
+                  path_without "$_dot_rec_origin" "$DOT_ARG_ORIGIN"
+                  _dot_rec_target="$DOT_ARG_TARGET/$RET"
 
-                  _dot_link "$_dot_recursive_origin" "$_dot_recursive_target"
+                  _dot_link "$_dot_rec_origin" "$_dot_rec_target"
                 fi
               done
               shift
             done
-            eval "set -- $_dot_recursive_dir_stack"
+            eval "set -- $_dot_rec_dir_stack"
           done
 
           IFS="$OLD_IFS"
