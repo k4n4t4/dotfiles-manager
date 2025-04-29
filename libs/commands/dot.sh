@@ -199,7 +199,6 @@ dot_install() {
           while [ $# -gt 0 ]; do
             _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
             _dot_rec_dir_stack=""
-
             while [ $# -gt 0 ]; do
               for _dot_rec_origin in "$1"/* "$1"/.*; do
                 base_name "$_dot_rec_origin"
