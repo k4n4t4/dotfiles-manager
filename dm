@@ -49,33 +49,24 @@ esac
 . "$WORK_PATH/libs/commands/dot.sh"
 
 
-SUBCOMMAND=""
+SUBCOMMAND="unknown"
 
 main() {
   [ $# -eq 0 ] && set -- help
 
   case "$1" in
-    ( help | h | usage | '-?' | '-h' | '--help' )
-      SUBCOMMAND="help"
-      commands_usage
-      ;;
-    ( install | i )
-      SUBCOMMAND="install"
-      shift
-      commands_run "$@"
-      ;;
-    ( uninstall | u )
-      SUBCOMMAND="uninstall"
-      shift
-      commands_run "$@"
-      ;;
-    ( check | c )
-      SUBCOMMAND="check"
-      shift
-      commands_run "$@"
-      ;;
-    ( debug | d )
-      SUBCOMMAND="debug"
+    ( help | h | usage | '-?' | '-h' | '--help' ) SUBCOMMAND="help" ;;
+    ( install | i ) SUBCOMMAND="install" ;;
+    ( uninstall | u ) SUBCOMMAND="uninstall" ;;
+    ( check | c ) SUBCOMMAND="check" ;;
+    ( debug | d ) SUBCOMMAND="debug" ;;
+    ( * ) msg_error "Invalid Sub Command: \"$1\"" ;;
+  esac
+  shift
+  case "$SUBCOMMAND" in
+    ( help ) commands_usage ;;
+    ( install | uninstall | check ) commands_run "$@" ;;
+    ( debug )
       msg_info "Information"
       msg_log "        HOME = \"$HOME\""
       msg_log "         PWD = \"$PWD\""
@@ -86,8 +77,6 @@ main() {
       msg_log "  SUBCOMMAND = \"$SUBCOMMAND\""
       ;;
     ( * )
-      msg_error "Invalid Sub Command: \"$1\""
-      SUBCOMMAND="help"
       commands_usage
       return 1
       ;;
