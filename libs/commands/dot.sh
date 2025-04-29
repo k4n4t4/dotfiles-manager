@@ -146,11 +146,28 @@ dot() {
       ;;
   esac
 
-  case "$SUBCOMMAND" in
-    ( 'install' )   dot_install   "$@" ;;
-    ( 'uninstall' ) dot_uninstall "$@" ;;
-    ( 'check' )     dot_check     "$@" ;;
-  esac
+
+  if [ -e "$DOT_ARG_ORIGIN" ]; then
+    if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
+      if [ "$DOT_OPT_RECURSIVE" = "yes" ] && [ -d "$DOT_ARG_ORIGIN" ]; then
+        case "$SUBCOMMAND" in
+          ( 'install' ) _dot_link_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" ;;
+          ( 'uninstall' ) : Not yet installed ;;
+          ( 'check' ) : Not yet installed ;;
+        esac
+      else
+        case "$SUBCOMMAND" in
+          ( 'install' ) _dot_link "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET" ;;
+          ( 'uninstall' ) : Not yet installed ;;
+          ( 'check' ) : Not yet installed ;;
+        esac
+      fi
+    else
+      msg_error "Not supported file type: $DOT_ARG_ORIGIN"
+    fi
+  else
+    msg_error "File not found: $DOT_ARG_ORIGIN"
+  fi
 }
 
 
@@ -214,29 +231,4 @@ _dot_link_rec() {
     eval "set -- $_dot_link_rec_dir_stack"
   done
   IFS="$OLD_IFS"
-}
-
-
-dot_install() {
-  if [ -e "$DOT_ARG_ORIGIN" ]; then
-    if [ -f "$DOT_ARG_ORIGIN" ] || [ -d "$DOT_ARG_ORIGIN" ]; then
-      if [ "$DOT_OPT_RECURSIVE" = "yes" ] && [ -d "$DOT_ARG_ORIGIN" ]; then
-        _dot_link_rec "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET"
-      else
-        _dot_link "$DOT_ARG_ORIGIN" "$DOT_ARG_TARGET"
-      fi
-    else
-      msg_error "Not supported file type: $DOT_ARG_ORIGIN"
-    fi
-  else
-    msg_error "File not found: $DOT_ARG_ORIGIN"
-  fi
-}
-
-dot_uninstall() {
-  : Not yet installed
-}
-
-dot_check() {
-  : Not yet installed
 }
