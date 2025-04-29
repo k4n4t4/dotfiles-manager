@@ -2,6 +2,10 @@
 set -eu
 
 
+if ! command -v -- "ps" > /dev/null 2>&1; then
+  echo '"ps" is not exist.' >&2
+  exit 1
+fi
 if ! command -v -- "realpath" > /dev/null 2>&1; then
   echo '"realpath" is not exist.' >&2
   exit 1
@@ -13,8 +17,7 @@ case "$WORK_PATH" in ( "" )
   WORK_PATH="/"
 esac
 
-SHELL_PATH="$(realpath "/proc/$$/exe")"
-SHELL_NAME="${SHELL_PATH##*"/"}"
+SHELL_NAME="$(ps -p $$ -o comm=)"
 case "$SHELL_NAME" in
   ( bash )
     # shellcheck disable=SC3044
@@ -25,7 +28,7 @@ case "$SHELL_NAME" in
     ;;
   ( yash | dash | ksh93 | busybox ) : ;;
   ( * )
-    echo "\"$SHELL_PATH\" is not supported." >&2
+    echo "\"$SHELL_NAME\" is not supported." >&2
     exit 1
     ;;
 esac
@@ -78,7 +81,6 @@ main() {
       msg_log "         PWD = \"$PWD\""
       msg_log "   FILE_PATH = \"$FILE_PATH\""
       msg_log "   WORK_PATH = \"$WORK_PATH\""
-      msg_log "  SHELL_PATH = \"$SHELL_PATH\""
       msg_log "  SHELL_NAME = \"$SHELL_NAME\""
       msg_log " KERNEL_NAME = \"$KERNEL_NAME\""
       msg_log "  SUBCOMMAND = \"$SUBCOMMAND\""
