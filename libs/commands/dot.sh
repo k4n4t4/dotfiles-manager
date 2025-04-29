@@ -215,7 +215,7 @@ _dot_unlink() {
       msg_error "$1 -?- $2 (Faild)"
     fi
   else
-    msg_log "$1 x-x $2 (Already)"
+    msg_log "$1 x-x $2 (Already Unlinked)"
   fi
 }
 
