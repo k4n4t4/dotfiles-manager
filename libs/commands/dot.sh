@@ -66,8 +66,16 @@ dot() {
       ( --origin-suffix ) shift ; DOT_OPT_ORIGIN_SUFFIX="$1" ; shift 1 ;;
       ( --target-prefix ) shift ; DOT_OPT_TARGET_PREFIX="$1" ; shift 1 ;;
       ( --target-suffix ) shift ; DOT_OPT_TARGET_SUFFIX="$1" ; shift 1 ;;
-      ( -i | --ignore ) shift ; qesc "$1" ; DOT_OPT_IGNORE="$DOT_OPT_IGNORE $RET" ; shift 1 ;;
-      ( -r | --recursive ) shift ; DOT_OPT_RECURSIVE="yes" ;;
+      ( -i | --ignore )
+        shift
+        qesc "$1"
+        DOT_OPT_IGNORE="$DOT_OPT_IGNORE $RET"
+        shift 1
+        ;;
+      ( -r | --recursive )
+        shift
+        DOT_OPT_RECURSIVE="yes"
+        ;;
       ( -d | --depth )
         shift
         if is_number "$1"; then
