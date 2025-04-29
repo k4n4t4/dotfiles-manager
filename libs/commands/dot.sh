@@ -202,9 +202,7 @@ dot_install() {
             while [ $# -gt 0 ]; do
               for _dot_rec_origin in "$1"/* "$1"/.*; do
                 base_name "$_dot_rec_origin"
-                case "$RET" in
-                  ( '.' | '..' ) continue ;;
-                esac
+                case "$RET" in ( '.' | '..' ) continue ;; esac
                 [ -e "$_dot_rec_origin" ] || continue
 
                 if [ -d "$_dot_rec_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
