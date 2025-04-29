@@ -152,6 +152,7 @@ dot() {
 
 
 # TODO: combine
+# TODO: ask
 
 _dot_link() {
   if file_exist "$2"; then
