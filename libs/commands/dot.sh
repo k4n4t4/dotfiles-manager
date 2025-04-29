@@ -300,3 +300,33 @@ _dot_check_rec() {
   done
   IFS="$OLD_IFS"
 }
+
+dot_rec() {
+  OLD_IFS="$IFS"
+  IFS="$NL"
+  set -- "$DOT_ARG_ORIGIN"
+  _dot_rec_current_depth=0
+  while [ $# -gt 0 ]; do
+    _dot_rec_current_depth=$((_dot_rec_current_depth + 1))
+    _dot_rec_dir_stack=""
+    while [ $# -gt 0 ]; do
+      for _dot_rec_entry_origin in "$1"/* "$1"/.*; do
+        base_name "$_dot_rec_entry_origin"
+        case "$RET" in ( '.' | '..' ) continue ;; esac
+        [ -e "$_dot_rec_entry_origin" ] || continue
+        alt_match "$RET" "$DOT_OPT_IGNORE" && continue
+        if [ -d "$_dot_rec_entry_origin" ] && [ "$_dot_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
+          qesc "$_dot_rec_entry_origin"
+          _dot_rec_dir_stack="$_dot_rec_dir_stack $RET"
+        else
+          path_without "$_dot_rec_entry_origin" "$DOT_ARG_ORIGIN"
+          _dot_rec_entry_target="$DOT_ARG_TARGET/$RET"
+          : TODO
+        fi
+      done
+      shift
+    done
+    eval "set -- $_dot_rec_dir_stack"
+  done
+  IFS="$OLD_IFS"
+}
