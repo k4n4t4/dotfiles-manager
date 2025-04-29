@@ -64,7 +64,7 @@ cmd_exist() {
 
 is_empty_dir() {
   set -- "${1:-.}"
-  set -- "$1/"* "$1/."*
+  set -- "$1"/* "$1"/.*
   while [ $# -gt 0 ]; do
     base_name "$1"
     case "$RET" in
