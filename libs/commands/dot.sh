@@ -216,7 +216,7 @@ _dot_link_rec() {
 
 _dot_unlink() {
   if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
-    if unlink -- "$1" "$2"; then
+    if unlink -- "$2"; then
       msg_log "$1 x-x $2"
     else
       msg_error "$1 -?- $2 (Faild)"
