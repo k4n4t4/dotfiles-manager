@@ -156,7 +156,7 @@ _dot_link() {
     if [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
       msg_log "$1 <-> $2 (Already Linked)"
     else
-      msg_error "$1 -x $2 (Already Exist)"
+      msg_error "$1 --x $2 (Already Exist)"
     fi
   else
     dir_name "$2"
@@ -171,12 +171,11 @@ _dot_link() {
         fi
       fi
     fi
-
     if [ -d "$RET" ]; then
       if ln -s -- "$1" "$2"; then
-        msg_log "$1 -> $2"
+        msg_log "$1 --> $2"
       else
-        msg_error "$1 -x $2 (Faild)"
+        msg_error "$1 --x $2 (Faild)"
       fi
     fi
   fi
