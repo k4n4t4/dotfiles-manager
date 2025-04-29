@@ -233,6 +233,26 @@ opt_parser() {
   RET="${_opt_parser_option_args#' '} -- ${_opt_parser_normal_args#' '}"
 }
 
+match() {
+  RET="$1"
+  eval "set -- $X"
+  while [ $# -gt 0 ]; do
+    eval 'case "$1" in ( '"$RET"' ) return 0 ;; esac'
+    shift
+  done
+  return 1
+}
+
+alt_match() {
+  RET="$1"
+  eval "set -- $X"
+  while [ $# -gt 0 ]; do
+    eval 'case "$RET" in ( '"$1"' ) return 0 ;; esac'
+    shift
+  done
+  return 1
+}
+
 
 ESC="$(printf "\033")"
 
