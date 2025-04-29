@@ -235,7 +235,7 @@ opt_parser() {
 
 match() {
   RET="$1"
-  eval "set -- $X"
+  eval "set -- $2"
   while [ $# -gt 0 ]; do
     eval 'case "$1" in ( '"$RET"' ) return 0 ;; esac'
     shift
@@ -245,7 +245,7 @@ match() {
 
 alt_match() {
   RET="$1"
-  eval "set -- $X"
+  eval "set -- $2"
   while [ $# -gt 0 ]; do
     eval 'case "$RET" in ( '"$1"' ) return 0 ;; esac'
     shift

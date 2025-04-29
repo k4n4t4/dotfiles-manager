@@ -9,3 +9,5 @@ dot ".fonts.conf"
 dotconf "fish" -r
 dotconf "hypr" -r
 dotconf "nvim" -r -d1
+
+dotconf "tmux" -r -i ".tmux.conf"

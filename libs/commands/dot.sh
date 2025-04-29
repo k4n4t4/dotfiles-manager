@@ -196,6 +196,7 @@ _dot_link_rec() {
         base_name "$_dot_link_rec_entry_origin"
         case "$RET" in ( '.' | '..' ) continue ;; esac
         [ -e "$_dot_link_rec_entry_origin" ] || continue
+        alt_match "$RET" "$DOT_OPT_IGNORE" && continue
         if [ -d "$_dot_link_rec_entry_origin" ] && [ "$_dot_link_rec_current_depth" -ne "$DOT_OPT_DEPTH" ]; then
           qesc "$_dot_link_rec_entry_origin"
           _dot_link_rec_dir_stack="$_dot_link_rec_dir_stack $RET"
