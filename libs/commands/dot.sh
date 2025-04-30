@@ -177,33 +177,51 @@ dot() {
 }
 
 
+_dot_ask_continue() {
+  msg_ask "Continue? [Y/n]: "
+  case "$RET" in
+    ( [nN] )
+      RET=1
+      ;;
+    ( * )
+      RET=0
+      ;;
+  esac
+}
+
 _dot_link() {
+  dir_name "$2"
+  if [ ! -d "$RET" ]; then
+    if file_exist "$RET"; then
+      msg_error "Cannot make directory: $RET (Already Exist)"
+      ask_continue
+      return "$RET"
+    else
+      if mkdir -p -- "$RET"; then
+        msg_log "Make directory: $RET"
+      else
+        msg_fatal "Cannot make directory: $RET (Faild)"
+        return 1
+      fi
+    fi
+  fi
+
   if file_exist "$2"; then
     if [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
       msg_log "$1 <-> $2 (Already Linked)"
+      return 0
     else
       msg_error "$1 --x $2 (Already Exist)"
+      ask_continue
+      return "$RET"
     fi
+  fi
+
+  if ln -s -- "$1" "$2"; then
+    msg_log "$1 --> $2"
   else
-    dir_name "$2"
-    if [ ! -d "$RET" ]; then
-      if file_exist "$RET"; then
-        msg_error "Cannot make directory: $RET (Already Exist)"
-      else
-        if mkdir -p -- "$RET"; then
-          msg_log "Make directory: $RET"
-        else
-          msg_error "Cannot make directory: $RET (Faild)"
-        fi
-      fi
-    fi
-    if [ -d "$RET" ]; then
-      if ln -s -- "$1" "$2"; then
-        msg_log "$1 --> $2"
-      else
-        msg_error "$1 --x $2 (Faild)"
-      fi
-    fi
+    msg_fatal "$1 --x $2 (Faild)"
+    return 1
   fi
 }
 
@@ -212,7 +230,8 @@ _dot_unlink() {
     if unlink -- "$2"; then
       msg_log "$1 x-x $2"
     else
-      msg_error "$1 -?- $2 (Faild)"
+      msg_fatal "$1 -?- $2 (Faild)"
+      return 1
     fi
   else
     msg_log "$1 x-x $2 (Already Unlinked)"
