@@ -765,6 +765,12 @@ WORK_PATH="${FILE_PATH%"/"*}"
 KERNEL_NAME="$(uname -s)"
 
 
+if [ -f "$WORK_PATH/config.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$WORK_PATH/config.sh"
+fi
+
+
 # Main
 
 main() {
