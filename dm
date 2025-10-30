@@ -804,6 +804,9 @@ main() {
     ( pull | p )
       main__sub_command="pull"
       ;;
+    ( debug )
+      main__sub_command="debug"
+      ;;
     ( * )
       msg_error "Invalid Sub Command: \"$1\""
       ;;
@@ -827,6 +830,11 @@ main() {
     ( pull )
       cd -- "$WORK_PATH"
       git pull
+      ;;
+    ( debug )
+      echo "WORK_PATH: $WORK_PATH"
+      echo "KERNEL_NAME: $KERNEL_NAME"
+      echo "FILE_PATH: $FILE_PATH"
       ;;
     ( * )
       usage
