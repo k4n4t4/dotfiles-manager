@@ -447,9 +447,9 @@ usage() {
 
 shell_cd() {
   if [ "${1:-}" = "" ]; then
-    printf "%s\n" "$DOTFILES_PATH"
+    printf "%s\n" "$REPO_PATH"
   else
-    printf "%s\n" "$DOTFILES_PATH/$1"
+    printf "%s\n" "$REPO_PATH/$1"
   fi
 }
 
@@ -804,6 +804,7 @@ KERNEL_NAME="$(uname -s)"
 PARENT_SHELL="${PARENT_SHELL:-"$(ps -o ppid= -p $$ | xargs -I{} ps -o comm= -p {})"}"
 
 CONFIG_PATH="${CONFIG_PATH:-"$WORK_PATH/config.sh"}"
+REPO_PATH="${REPO_PATH:-"$WORK_PATH"}"
 DOTFILES_PATH="${DOTFILES_PATH:-"$WORK_PATH/files"}"
 SCRIPTS_PATH="${SCRIPTS_PATH:-"$WORK_PATH/scripts"}"
 TARGET_PATH="${TARGET_PATH:-"$HOME"}"
@@ -889,11 +890,11 @@ main() {
       shellenv "$@"
       ;;
     ( git )
-      cd -- "$WORK_PATH"
+      cd -- "$REPO_PATH"
       git "$@"
       ;;
     ( pull )
-      cd -- "$WORK_PATH"
+      cd -- "$REPO_PATH"
       git pull
       ;;
     ( debug )
