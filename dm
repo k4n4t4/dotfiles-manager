@@ -454,7 +454,6 @@ shell_cd() {
 }
 
 shellenv() {
-  PARENT_SHELL="$(ps -o ppid= -p $$ | xargs -I{} ps -o comm= -p {})"
   case "$PARENT_SHELL" in
     ( sh | bash | zsh )
 cat << EOL
@@ -802,6 +801,7 @@ FILE_PATH="$(realpath "$0")"
 dir_name "$FILE_PATH"
 WORK_PATH="$RET"
 KERNEL_NAME="$(uname -s)"
+PARENT_SHELL="${PARENT_SHELL:-"$(ps -o ppid= -p $$ | xargs -I{} ps -o comm= -p {})"}"
 
 CONFIG_PATH="${CONFIG_PATH:-"$WORK_PATH/config.sh"}"
 DOTFILES_PATH="${DOTFILES_PATH:-"$WORK_PATH/files"}"
