@@ -803,9 +803,10 @@ dir_name "$FILE_PATH"
 WORK_PATH="$RET"
 KERNEL_NAME="$(uname -s)"
 
-DOTFILES_PATH="$WORK_PATH/files"
-SCRIPTS_PATH="$WORK_PATH/scripts"
-TARGET_PATH="$HOME"
+CONFIG_PATH="${CONFIG_PATH:-"$WORK_PATH/config.sh"}"
+DOTFILES_PATH="${DOTFILES_PATH:-"$WORK_PATH/files"}"
+SCRIPTS_PATH="${SCRIPTS_PATH:-"$WORK_PATH/scripts"}"
+TARGET_PATH="${TARGET_PATH:-"$HOME"}"
 
 
 # Load Config
@@ -822,9 +823,9 @@ SET_DIR_PATH() {
   fi
 }
 
-if [ -f "$WORK_PATH/config.sh" ]; then
-  # shellcheck disable=SC1091
-  . "$WORK_PATH/config.sh"
+if [ -f "$CONFIG_PATH" ]; then
+  # shellcheck disable=SC1090
+  . "$CONFIG_PATH"
 fi
 
 
