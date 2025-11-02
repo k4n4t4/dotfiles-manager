@@ -815,7 +815,7 @@ SET_DIR_PATH() {
   [ -z "${2:-}" ] && return 0
 
   if [ -d "$2" ]; then
-    abs_path_prefix "$2" "$WORK_PATH"
+    abs_path_prefix "$2" "$CONFIG_PATH"
     eval "$1"'="$RET"'
   else
     msg_error "Invalid path: $2"
