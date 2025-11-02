@@ -485,11 +485,10 @@ EOL
   esac
 }
 
-# TODO: Add force option
-# TODO: Add backup option
 _dot_run_script() {
   DOT_IS_QUIET=false
   DOT_IS_YES_MODE=false
+  DOT_IS_FORCE_MODE=false
   DOT_ORIGIN_PATH="$DOTFILES_PATH"
   DOT_TARGET_PATH="$TARGET_PATH"
   DOT_SCRIPT_NAME=""
@@ -532,6 +531,10 @@ _dot_run_script() {
       ( -y | --yes )
         shift
         DOT_IS_YES_MODE=true
+        ;;
+      ( -f | --force )
+        shift
+        DOT_IS_FORCE_MODE=true
         ;;
       ( -t | --target-path )
         shift
@@ -630,9 +633,22 @@ _dot_link() {
       _dot_msg log "$1" "<->" "$2" "(Already Linked)"
       return 0
     else
-      _dot_msg error "$1" "--x" "$2" "(Already Exist)"
-      _dot_ask_continue
-      return "$RET"
+      if $DOT_IS_FORCE_MODE || $dot__is_force; then
+        if is_deletable "$2"; then
+          if ! msg_run rm -rf -- "$2"; then
+            _dot_msg fatal "$1" "-?-" "$2" "(Not Deletable)"
+            return 1
+          fi
+        else
+          _dot_msg error "$1" "-?-" "$2" "(Not Deletable)"
+          _dot_ask_continue
+          return "$RET"
+        fi
+      else
+        _dot_msg error "$1" "--x" "$2" "(Already Exist)"
+        _dot_ask_continue
+        return "$RET"
+      fi
     fi
   fi
 
@@ -687,13 +703,13 @@ _dot() {
   :
 }
 
-# TODO: Add force option
 dot() {
   dot__origin_root="$DOT_ORIGIN_PATH"
   dot__target_root="$DOT_TARGET_PATH"
   dot__origin_prefix=""
   dot__target_prefix=""
-  dot__recursive=false
+  dot__is_recursive=false
+  dot__is_force=false
   dot__depth=-1
   dot__ignore=""
   dot__origin=""
@@ -723,7 +739,11 @@ dot() {
         ;;
       ( -r | --recursive )
         shift
-        dot__recursive="yes"
+        dot__is_recursive=true
+        ;;
+      ( -f | --force )
+        shift
+        dot__is_force=true
         ;;
       ( -d | --depth )
         shift
@@ -754,7 +774,7 @@ dot() {
 
   if [ -e "$dot__origin" ]; then
     if [ -f "$dot__origin" ] || [ -d "$dot__origin" ]; then
-      if [ "$dot__recursive" = "yes" ] && [ -d "$dot__origin" ]; then
+      if $dot__is_recursive && [ -d "$dot__origin" ]; then
         get_files_recursive "$dot__origin" "$dot__depth"
         eval "set -- $RET"
         while [ $# -gt 0 ]; do
