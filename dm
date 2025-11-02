@@ -456,7 +456,7 @@ shell_cd() {
 shellenv() {
   PARENT_SHELL="$(ps -o ppid= -p $$ | xargs -I{} ps -o comm= -p {})"
   case "$PARENT_SHELL" in
-    ( bash | zsh )
+    ( sh | bash | zsh )
 cat << EOL
 dm() {
   case "\${1:-}" in
