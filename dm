@@ -121,6 +121,23 @@ is_deletable() {
   fi
 }
 
+is_creatable() {
+  dir_name "$1"
+  if ! file_exists "$1" && [ -d "$RET" ] && [ -w "$RET" ] && [ -x "$RET" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+is_linked() {
+  if [ -L "$2" ] && [ "$1" = "$(realpath "$2")" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 is_number() {
   case "$1" in
     ( *[!0123456789]* )
