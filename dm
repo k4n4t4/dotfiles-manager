@@ -652,14 +652,15 @@ _dot_link() {
     fi
   else
     dir_name "$2"
-    if ! [ -d "$RET" ]; then
-      if is_creatable "$RET"; then
-        if ! msg_run mkdir -p -- "$RET"; then
-          msg_fatal "Cannot make directory: $RET (Faild)"
+    TMP="$RET"
+    if ! [ -d "$TMP" ]; then
+      if is_creatable "$TMP"; then
+        if ! msg_run mkdir -p -- "$TMP"; then
+          msg_fatal "Cannot make directory: $TMP (Faild)"
           return 1
         fi
       else
-        msg_error "Cannot make directory: $RET"
+        msg_error "Cannot make directory: $TMP"
         _dot_ask_continue
         return "$RET"
       fi
