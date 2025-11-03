@@ -628,24 +628,8 @@ _dot_msg() {
 }
 
 _dot_link() {
-  dir_name "$2"
-  if [ ! -d "$RET" ]; then
-    if file_exists "$RET"; then
-      msg_error "Cannot make directory: $RET (Already Exist)"
-      _dot_ask_continue
-      return "$RET"
-    else
-      if mkdir -p -- "$RET"; then
-        msg_log "Make directory: $RET"
-      else
-        msg_fatal "Cannot make directory: $RET (Faild)"
-        return 1
-      fi
-    fi
-  fi
-
   if file_exists "$2"; then
-    if [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
+    if is_linked "$1" "$2"; then
       _dot_msg log "$1" "<->" "$2" "(Already Linked)"
       return 0
     else
@@ -666,6 +650,20 @@ _dot_link() {
         return "$RET"
       fi
     fi
+  else
+    dir_name "$2"
+    if ! [ -d "$RET" ]; then
+      if is_creatable "$RET"; then
+        if ! msg_run mkdir -p -- "$RET"; then
+          msg_fatal "Cannot make directory: $RET (Faild)"
+          return 1
+        fi
+      else
+        msg_error "Cannot make directory: $RET"
+        _dot_ask_continue
+        return "$RET"
+      fi
+    fi
   fi
 
   if ln -s -- "$1" "$2"; then
@@ -677,7 +675,7 @@ _dot_link() {
 }
 
 _dot_unlink() {
-  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
+  if is_linked "$1" "$2"; then
     if unlink -- "$2"; then
       _dot_msg success "$1" "x-x" "$2"
     else
@@ -690,7 +688,7 @@ _dot_unlink() {
 }
 
 _dot_check() {
-  if [ -e "$2" ] && [ -L "$2" ] && [ "$(realpath "$2")" = "$1" ]; then
+  if is_linked "$1" "$2"; then
     _dot_msg success "$1" "<->" "$2"
   else
     _dot_msg warn "$1" "-?-" "$2"
