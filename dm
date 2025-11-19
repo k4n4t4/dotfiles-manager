@@ -928,6 +928,19 @@ main() {
       cd -- "$REPO_PATH"
       git pull
       ;;
+    ( main )
+      cd -- "$REPO_PATH"
+      git checkout "main"
+      ;;
+    ( local )
+      cd -- "$REPO_PATH"
+      TMP="local"
+      if git show-ref --verify --quiet refs/heads/"$TMP"; then
+        git checkout "$TMP"
+      else
+        git checkout -b "$TMP"
+      fi
+      ;;
     ( debug )
       echo "WORK_PATH: $WORK_PATH"
       echo "KERNEL_NAME: $KERNEL_NAME"
