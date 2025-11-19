@@ -932,7 +932,7 @@ main() {
       ;;
     ( pull )
       cd -- "$REPO_PATH"
-      git pull
+      git pull origin main
       ;;
     ( main )
       cd -- "$REPO_PATH"
