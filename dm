@@ -628,51 +628,61 @@ _dot_msg() {
 }
 
 _dot_link() {
+  if $dot__is_copy; then
+    if file_exists "$2"; then
+      _dot_msg log "$1" "<->" "$2" "(Already Exist)"
+      return 0
+    fi
+
+    if ! cp -- "$1" "$2"; then
+      _dot_msg fatal "$1" "--x" "$2" "(Faild)"
+      return 1
+    fi
+
+    _dot_msg success "$1" "-->" "$2" "(Copy)"
+  fi
+
   if file_exists "$2"; then
     if is_linked "$1" "$2"; then
       _dot_msg log "$1" "<->" "$2" "(Already Linked)"
       return 0
-    else
-      if $DOT_IS_FORCE_MODE || $dot__is_force; then
-        if is_deletable "$2"; then
-          if ! msg_run rm -rf -- "$2"; then
-            _dot_msg fatal "$1" "-?-" "$2" "(Not Deletable)"
-            return 1
-          fi
-        else
-          _dot_msg error "$1" "-?-" "$2" "(Not Deletable)"
-          _dot_ask_continue
-          return "$RET"
-        fi
-      else
-        _dot_msg error "$1" "--x" "$2" "(Already Exist)"
-        _dot_ask_continue
-        return "$RET"
-      fi
     fi
-  else
-    dir_name "$2"
-    TMP="$RET"
-    if ! [ -d "$TMP" ]; then
-      if is_creatable "$TMP"; then
-        if ! msg_run mkdir -p -- "$TMP"; then
-          msg_fatal "Cannot make directory: $TMP (Faild)"
-          return 1
-        fi
-      else
-        msg_error "Cannot make directory: $TMP"
-        _dot_ask_continue
-        return "$RET"
-      fi
+    if ! $DOT_IS_FORCE_MODE && ! $dot__is_force; then
+      _dot_msg error "$1" "--x" "$2" "(Already Exist)"
+      _dot_ask_continue
+      return "$RET"
+    fi
+    if ! is_deletable "$2"; then
+      _dot_msg error "$1" "-?-" "$2" "(Not Deletable)"
+      _dot_ask_continue
+      return "$RET"
+    fi
+    if ! msg_run rm -rf -- "$2"; then
+      _dot_msg fatal "$1" "-?-" "$2" "(Not Deletable)"
+      return 1
     fi
   fi
 
-  if ln -s -- "$1" "$2"; then
-    _dot_msg success "$1" "-->" "$2"
-  else
+  dir_name "$2"
+  TMP="$RET"
+  if ! [ -d "$TMP" ]; then
+    if ! is_creatable "$TMP"; then
+      msg_error "Cannot make directory: $TMP"
+      _dot_ask_continue
+      return "$RET"
+    fi
+    if ! msg_run mkdir -p -- "$TMP"; then
+      msg_fatal "Cannot make directory: $TMP (Faild)"
+      return 1
+    fi
+  fi
+
+  if ! ln -s -- "$1" "$2"; then
     _dot_msg fatal "$1" "--x" "$2" "(Faild)"
     return 1
   fi
+
+  _dot_msg success "$1" "-->" "$2"
 }
 
 _dot_unlink() {
@@ -725,6 +735,7 @@ dot() {
   dot__target_prefix=""
   dot__is_recursive=false
   dot__is_force=false
+  dot__is_copy=false
   dot__depth=-1
   dot__ignore=""
   dot__origin=""
@@ -766,6 +777,10 @@ dot() {
           dot__depth=$1
         fi
         shift 1
+        ;;
+      ( -c | --copy )
+        shift
+        dot__is_copy=true
         ;;
       ( * )
         msg_error "Invalid Option: $1"
