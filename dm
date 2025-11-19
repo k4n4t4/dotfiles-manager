@@ -901,6 +901,12 @@ main() {
     ( pull | p )
       main__sub_command="pull"
       ;;
+    ( local | l )
+      main__sub_command="local"
+      ;;
+    ( main | m )
+      main__sub_command="main"
+      ;;
     ( debug )
       main__sub_command="debug"
       ;;
