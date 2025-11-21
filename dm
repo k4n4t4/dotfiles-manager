@@ -940,7 +940,7 @@ main() {
       if [ "$TMP" != "main" ]; then
         git add .
         git commit -m update
-        git checkout "main"
+        git checkout main
       fi
       ;;
     ( local )
