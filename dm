@@ -936,15 +936,14 @@ main() {
       ;;
     ( main )
       cd -- "$REPO_PATH"
-      git checkout "main"
+      git checkout main
       ;;
     ( local )
       cd -- "$REPO_PATH"
-      TMP="local"
-      if git show-ref --verify --quiet refs/heads/"$TMP"; then
-        git checkout "$TMP"
+      if git show-ref --verify --quiet refs/heads/local; then
+        git checkout local
       else
-        git checkout -b "$TMP"
+        git checkout -b local
       fi
       ;;
     ( debug )
