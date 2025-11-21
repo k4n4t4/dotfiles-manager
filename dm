@@ -886,7 +886,7 @@ main() {
     ( uninstall | u )
       main__sub_command="uninstall"
       ;;
-    ( check | c )
+    ( check )
       main__sub_command="check"
       ;;
     ( cd )
@@ -900,6 +900,9 @@ main() {
       ;;
     ( pull | p )
       main__sub_command="pull"
+      ;;
+    ( commit | c )
+      main__sub_command="commit"
       ;;
     ( local | l )
       main__sub_command="local"
@@ -929,6 +932,11 @@ main() {
     ( git )
       cd -- "$REPO_PATH"
       git "$@"
+      ;;
+    ( commit )
+      cd -- "$REPO_PATH"
+      git add .
+      git commit -m update
       ;;
     ( pull )
       cd -- "$REPO_PATH"
