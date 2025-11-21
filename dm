@@ -940,6 +940,8 @@ main() {
       ;;
     ( local )
       cd -- "$REPO_PATH"
+      git add .
+      git commit -m update
       TMP="local"
       if git show-ref --verify --quiet refs/heads/"$TMP"; then
         git checkout "$TMP"
