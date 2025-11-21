@@ -950,9 +950,9 @@ main() {
         git add .
         git commit -m update
         if git show-ref --verify --quiet refs/heads/local; then
-          git checkout "$TMP"
+          git checkout local
         else
-          git checkout -b "$TMP"
+          git checkout -b local
         fi
       fi
       ;;
