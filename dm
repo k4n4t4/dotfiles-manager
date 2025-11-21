@@ -936,24 +936,15 @@ main() {
       ;;
     ( main )
       cd -- "$REPO_PATH"
-      TMP="$(git rev-parse --abbrev-ref HEAD)"
-      if [ "$TMP" != "main" ]; then
-        git add .
-        git commit -m update
-        git checkout main
-      fi
+      git checkout "main"
       ;;
     ( local )
       cd -- "$REPO_PATH"
-      TMP="$(git rev-parse --abbrev-ref HEAD)"
-      if [ "$TMP" != "local" ]; then
-        git add .
-        git commit -m update
-        if git show-ref --verify --quiet refs/heads/local; then
-          git checkout local
-        else
-          git checkout -b local
-        fi
+      TMP="local"
+      if git show-ref --verify --quiet refs/heads/"$TMP"; then
+        git checkout "$TMP"
+      else
+        git checkout -b "$TMP"
       fi
       ;;
     ( debug )
