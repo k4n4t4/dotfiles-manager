@@ -666,7 +666,7 @@ _dot_link() {
   dir_name "$2"
   TMP="$RET"
   if ! [ -d "$TMP" ]; then
-    if ! is_creatable "$TMP"; then
+    if file_exists "$TMP"; then
       msg_error "Cannot make directory: $TMP"
       _dot_ask_continue
       return "$RET"
