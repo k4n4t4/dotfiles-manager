@@ -569,6 +569,11 @@ _dot_run_script() {
   while [ $# -gt 0 ]; do
     DOT_SCRIPT_NAME="$1"
 
+    if [ -f "$SCRIPTS_PATH/common.sh" ]; then
+      # shellcheck disable=SC1091
+      . "$SCRIPTS_PATH/common.sh"
+    fi
+
     if [ -f "$SCRIPTS_PATH/$DOT_SCRIPT_NAME.sh" ]; then
       # shellcheck disable=SC1090
       . "$SCRIPTS_PATH/$DOT_SCRIPT_NAME.sh"
