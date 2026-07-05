@@ -333,9 +333,9 @@ get_files_recursive() {
       for i in "$1"/* "$1"/.*; do
         base_name "$i"
         case "$RET" in ( '.' | '..' | '*' | '.*' ) continue ;; esac
-          if alt_match "$RET" "$_ignore_list"; then
-              continue
-          fi
+        if alt_match "$RET" "$_ignore_list"; then
+          continue
+        fi
 
         if [ -d "$i" ] && [ "$_dir_depth" -ne "$_dir_max_depth" ]; then
           qesc "$i"
