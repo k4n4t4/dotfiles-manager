@@ -323,6 +323,7 @@ get_files_recursive() {
   TMP=""
   _dir_max_depth="${2:-1000}"
   _include_dir="${3:-false}"
+  _ignore_list="${4:-" "}"
   _dir_depth=0
   set -- "$1"
   while [ $# -gt 0 ]; do
@@ -332,6 +333,10 @@ get_files_recursive() {
       for i in "$1"/* "$1"/.*; do
         base_name "$i"
         case "$RET" in ( '.' | '..' | '*' | '.*' ) continue ;; esac
+          if alt_match "$RET" "$_ignore_list"; then
+              continue
+          fi
+
         if [ -d "$i" ] && [ "$_dir_depth" -ne "$_dir_max_depth" ]; then
           qesc "$i"
           _dir_stack="$_dir_stack $RET"
@@ -810,13 +815,11 @@ dot() {
   if [ -e "$dot__origin" ]; then
     if [ -f "$dot__origin" ] || [ -d "$dot__origin" ]; then
       if $dot__is_recursive && [ -d "$dot__origin" ]; then
-        get_files_recursive "$dot__origin" "$dot__depth"
+        get_files_recursive "$dot__origin" "$dot__depth" false "$dot__ignore"
         eval "set -- $RET"
         while [ $# -gt 0 ]; do
           base_name "$1"
-          if ! alt_match "$RET" "$dot__ignore"; then
-            _dot "$1" "$dot__target/${1#"$dot__origin/"}"
-          fi
+          _dot "$1" "$dot__target/${1#"$dot__origin/"}"
           shift
         done
       else
